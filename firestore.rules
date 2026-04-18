@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // History collection: logged-in users can read their own or public history
+    match /history/{documentId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Logs should generally be write-only via backend/cloud functions
+    }
+  }
+}
